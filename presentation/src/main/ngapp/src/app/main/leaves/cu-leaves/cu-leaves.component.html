@@ -1,0 +1,21 @@
+<h1 class="mat-dialog-title">{{message}}</h1>
+<div mat-dialog-content="">
+    <form [formGroup]="formGroup">
+        <mat-form-field>
+            <input matInput [matDatepicker]="pickerFrom" formControlName="dateFrom"
+                   placeholder="Start Date" [min]="minStartDate" #startDate>
+            <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+            <mat-datepicker #pickerFrom></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput [matDatepicker]="pickerTo" formControlName="dateTo"
+                   placeholder="End Date" [min]="startDate.value" #endDate>
+            <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+            <mat-datepicker #pickerTo></mat-datepicker>
+        </mat-form-field>
+    </form>
+</div>
+<mat-dialog-actions align="end">
+    <button mat-raised-button (click)="save()" [disabled]="!formGroup.valid">Save</button>
+    <button mat-raised-button (click)="close()">Close</button>
+</mat-dialog-actions>

@@ -1,0 +1,39 @@
+<h1 mat-dialog-title> {{message}} </h1>
+<mat-dialog-content>
+    <form [formGroup]="formGroup">
+        <mat-form-field>
+            <input matInput formControlName="name" placeholder="Name">
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput formControlName="surname" placeholder="Surname">
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput formControlName="username" placeholder="Username">
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput formControlName="email" placeholder="E-mail">
+        </mat-form-field>
+        <mat-form-field *ngIf="!isUpdate">
+            <input matInput formControlName="password" placeholder="Password" #password>
+            <button mat-icon-button appTogglePassword [input]="password" matSuffix>
+                <mat-icon>visibility</mat-icon>
+            </button>
+        </mat-form-field>
+        <mat-form-field *ngIf="!isUpdate">
+            <input matInput formControlName="repPassword" placeholder="Repeat Password" #repPassword>
+            <button mat-icon-button appTogglePassword [input]="repPassword" matSuffix>
+                <mat-icon>visibility</mat-icon>
+            </button>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-select formControlName="role" placeholder="Role">
+                <mat-option value="ROLE_USER">User</mat-option>
+                <mat-option value="ROLE_ADMIN">Administrator</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-raised-button (click)="save()" [disabled]="!formGroup.valid">Save</button>
+    <button mat-raised-button (click)="close()">Cancel</button>
+</mat-dialog-actions>
