@@ -1,3 +1,34 @@
-<p>
-  user-details works!
-</p>
+<div class="profile" fxFlexFill>
+    <mat-card class="profile-wrapper" fxFlexFill="">
+        <mat-card-header fxLayout="row">
+            <mat-card-title>{{currentUser.name + ' ' +currentUser.surname}}</mat-card-title>
+            <span fxFlex="1 1 auto"></span>
+            <div class="actions">
+                <button mat-icon-button (click)="updateProfile()"><mat-icon>edit</mat-icon></button>
+                <button mat-icon-button (click)="updatePassword()"><mat-icon>update</mat-icon></button>
+            </div>
+        </mat-card-header>
+        <mat-card-content fxLayout="column" class="content">
+            <p class="name" fxFlex="row" fxLayoutAlign="space-between center">
+                <span class="title">Name</span>
+                <span>{{currentUser.name}}</span>
+            </p>
+            <p class="surname" fxFlex="row" fxLayoutAlign="space-between center">
+                <span class="title">Surname</span>
+                <span>{{currentUser.surname}}</span>
+            </p>
+            <p class="email" fxFlex="row" fxLayoutAlign="space-between center">
+                <span class="title">Email</span>
+                <span>{{currentUser.email}}</span>
+            </p>
+            <p class="email" fxFlex="row" fxLayoutAlign="space-between center">
+                <span class="title">Username</span>
+                <span>{{currentUser.username}}</span>
+            </p>
+            <p class="email" fxFlex="row" fxLayoutAlign="space-between center">
+                <span class="title">Days Left</span>
+                <span>{{currentUser.leavesLeft}}</span>
+            </p>
+        </mat-card-content>
+    </mat-card>
+</div>

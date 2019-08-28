@@ -1,16 +1,22 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {FuseConfirmDialogModule, FuseProgressBarModule, FuseSidebarModule, FuseThemeOptionsModule} from '../../@fuse/components';
+import {
+    FuseConfirmDialogModule,
+    FuseProgressBarModule,
+    FuseSidebarModule,
+    FuseThemeOptionsModule
+} from '../../@fuse/components';
 import {FuseSharedModule} from '../../@fuse/shared.module';
 import {MaterialModule} from '../material/material.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ResetPasswordComponent} from './components/reset-password/reset-password.component';
-import {TogglePasswordDirective} from '../helpers/directives/toggle-password.directive';
+import {CuUsersComponent} from "./components/cu-users/cu-users.component";
+import {DirectivesModule} from "../helpers/directives/directives.module";
 
 @NgModule({
     declarations: [
         ResetPasswordComponent,
-        TogglePasswordDirective
+        CuUsersComponent
     ],
     imports: [
         CommonModule,
@@ -18,7 +24,8 @@ import {TogglePasswordDirective} from '../helpers/directives/toggle-password.dir
         ReactiveFormsModule,
         FuseSharedModule,
         MaterialModule,
-        FuseConfirmDialogModule
+        FuseConfirmDialogModule,
+        DirectivesModule
     ],
     exports: [
         FormsModule,
@@ -30,9 +37,9 @@ import {TogglePasswordDirective} from '../helpers/directives/toggle-password.dir
         FuseConfirmDialogModule,
         ResetPasswordComponent,
         MaterialModule,
-        TogglePasswordDirective
+        DirectivesModule
     ],
-    entryComponents: [ResetPasswordComponent]
+    entryComponents: [ResetPasswordComponent, CuUsersComponent]
 })
 export class SharedModule {
 }

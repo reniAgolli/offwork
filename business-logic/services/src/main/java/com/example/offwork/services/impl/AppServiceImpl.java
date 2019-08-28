@@ -8,10 +8,14 @@ import com.example.offwork.domain.exception.EntityNotFoundException;
 import com.example.offwork.domain.exception.IncorrectDataException;
 import com.example.offwork.domain.extras.ApplicationStatus;
 import com.example.offwork.domain.extras.ErrorMessages;
+import com.example.offwork.domain.extras.Role;
 import com.example.offwork.persistence.dao.AppRepo;
 import com.example.offwork.persistence.dao.UserRepo;
 import com.example.offwork.services.api.AppService;
 import com.example.offwork.services.security.CurrentUser;
+import com.example.offwork.services.utils.Utils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +28,8 @@ import java.util.stream.Collectors;
 @Service
 public class AppServiceImpl implements AppService {
 
+    private static Logger logger = LogManager.getLogger(AppServiceImpl.class);
+
     @Value("${app.maxDays}")
     private int maxDays;
     @Autowired
@@ -32,11 +38,15 @@ public class AppServiceImpl implements AppService {
     private UserRepo userRepo;
     @Autowired
     private AppRepo appRepo;
+    @Autowired
+    private Utils utils;
 
     @Override
     public List<ApplicationDto> getAll(UserPrincipal principal) {
-        System.out.println(this.calculateAppDaysForUser(principal));
-        return appRepo.findAll().stream()
+        List<ApplicationEnt> leaves = Utils.hasRole(principal, Role.ROLE_ADMIN.name()) ?
+                appRepo.findAll() : appRepo.findAllByRequestedById(principal.getId());
+
+        return leaves.stream()
                 .map(this::toApplicationDto)
                 .collect(Collectors.toList());
     }
@@ -51,9 +61,24 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public ApplicationDto create(ApplicationDto applicationDto, @CurrentUser UserPrincipal principal) {
-        System.out.println(applicationDto.getEndDate() >= applicationDto.getStartDate());
+        logger.info(applicationDto.getEndDate() >= applicationDto.getStartDate());
         if (applicationDto.getEndDate() <= applicationDto.getStartDate()) {
             throw new IncorrectDataException(ErrorMessages.STARTDATE_LESS_THEN_ENDDATE);
+        }
+        double dif = Utils.getDifferenceOfDays(applicationDto.getStartDate(), applicationDto.getEndDate());
+        if (dif > maxDays) {
+            throw new IncorrectDataException(ErrorMessages.LEAVE_HAS_EXCIDED_MAX_DAYS);
+        }
+        logger.info(dif);
+        double ttn = utils.calculateAppDaysForUser(principal.getId());
+        logger.info(ttn);
+        if (dif > maxDays) {
+            throw new IncorrectDataException(ErrorMessages.LEAVE_HAS_EXCIDED_MAX_DAYS);
+        }
+        logger.info(ttn + dif);
+
+        if (ttn + dif > maxDays) {
+            throw new IncorrectDataException(ErrorMessages.NOT_ENAUGHT_LEAVE_DAYS);
         }
         UserEnt userEnt = userRepo.findById(principal.getId()).orElse(null);
         return Optional.of(this.toApplicationEnt(applicationDto))
@@ -69,12 +94,13 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public ApplicationDto update(ApplicationDto applicationDto) {
-        System.out.println(applicationDto.getEndDate() + "=>" + applicationDto.getStartDate() + "=" + (applicationDto.getEndDate() - applicationDto.getStartDate()));
+        logger.info(applicationDto.getEndDate() + "=>" + applicationDto.getStartDate() + "=" + (applicationDto.getEndDate() - applicationDto.getStartDate()));
         if (applicationDto.getEndDate() <= applicationDto.getStartDate()) {
             throw new IncorrectDataException(ErrorMessages.STARTDATE_LESS_THEN_ENDDATE);
         }
         return appRepo.findById(applicationDto.getId())
                 .map(e -> this.addProps(e, applicationDto))
+                .map(this::checkValidity)
                 .map(appRepo::save)
                 .map(this::toApplicationDto)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.APPLICATION_DOESNT_EXIST));
@@ -131,16 +157,34 @@ public class AppServiceImpl implements AppService {
         return applicationEnt;
     }
 
-    private double calculateAppDaysForUser(UserPrincipal userPrincipal) {
-        return this.appRepo.findAllByRequestedById(userPrincipal.getId()).stream()
-                .mapToDouble(e -> getDifferenceOfDays(e.getStartDate(), e.getEndDate()))
-                .sum();
+    private ApplicationEnt checkValidity(ApplicationEnt applicationEnt) {
+        if (applicationEnt.getStatus().equals(ApplicationStatus.CONFIRMED)) {
+            List<ApplicationEnt> apps = appRepo.findAllByRequestedByIdAndStatusNotApproved(applicationEnt.getRequestedBy().getId())
+                    .stream()
+                    .filter(e -> applicationEnt.getId() != e.getId())
+                    .collect(Collectors.toList());
 
+            logger.info(applicationEnt.getEndDate() >= applicationEnt.getStartDate());
+            if (applicationEnt.getEndDate() <= applicationEnt.getStartDate()) {
+                throw new IncorrectDataException(ErrorMessages.STARTDATE_LESS_THEN_ENDDATE);
+            }
+            double dif = Utils.getDifferenceOfDays(applicationEnt.getStartDate(), applicationEnt.getEndDate());
+            if (dif > maxDays) {
+                throw new IncorrectDataException(ErrorMessages.LEAVE_HAS_EXCIDED_MAX_DAYS);
+            }
+            logger.info(dif);
+            double ttn = Utils.getDifferenceOfDaysForList(apps);
+            logger.info(ttn);
+            if (dif > maxDays) {
+                throw new IncorrectDataException(ErrorMessages.LEAVE_HAS_EXCIDED_MAX_DAYS);
+            }
+            logger.info(ttn + dif);
+
+            if (ttn + dif > maxDays) {
+                throw new IncorrectDataException(ErrorMessages.NOT_ENAUGHT_LEAVE_DAYS);
+            }
+        }
+        return applicationEnt;
     }
 
-    private double getDifferenceOfDays(long date, long date1) {
-        System.out.println(date);
-        System.out.println(date1);
-        return Math.ceil((date1 - date) / (24 * 60 * 60 * 1000));
-    }
 }

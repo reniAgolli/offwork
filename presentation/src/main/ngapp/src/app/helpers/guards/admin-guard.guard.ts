@@ -13,7 +13,7 @@ export class AdminGuardGuard implements CanActivate, CanActivateChild {
     }
 
     canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-        if (!this._authService.hasRole('ADMIN')) {
+        if (!AuthServiceService.hasRole('ROLE_ADMIN')) {
             this._router.navigateByUrl('/login');
             return false;
         }
@@ -21,7 +21,7 @@ export class AdminGuardGuard implements CanActivate, CanActivateChild {
     }
 
     canActivateChild(childRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-        if (!this._authService.hasRole('ADMIN')) {
+        if (!AuthServiceService.hasRole('ROLE_ADMIN')) {
             this._router.navigateByUrl('/login');
             return false;
         }

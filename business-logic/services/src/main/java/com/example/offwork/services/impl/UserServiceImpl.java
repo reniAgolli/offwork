@@ -7,14 +7,20 @@ import com.example.offwork.domain.entities.UserEnt;
 import com.example.offwork.domain.exception.EntityNotFoundException;
 import com.example.offwork.domain.exception.IncorrectDataException;
 import com.example.offwork.domain.extras.ErrorMessages;
+import com.example.offwork.domain.extras.Role;
 import com.example.offwork.persistence.dao.UserRepo;
 import com.example.offwork.services.api.UserService;
+import com.example.offwork.services.utils.Utils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,6 +28,11 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
+
+    private static final Logger logger = LogManager.getLogger(UserServiceImpl.class);
+
+    @Value("${app.maxDays}")
+    private int maxDays;
     @Autowired
     ModelMapper modelMapper;
     @Autowired
@@ -30,25 +41,45 @@ public class UserServiceImpl implements UserService {
     PasswordEncoder passwordEncoder;
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private Utils utils;
+
+    @PostConstruct
+    public void insertUserIfNoUsers() {
+        long uc = userRepo.count();
+        logger.info("number of users: {}", uc);
+        if(uc == 0) {
+           insertFirstAdmin();
+        }
+    }
+
+    private void insertFirstAdmin() {
+        UserEnt userEnt = new UserEnt("admin", "admin", "admin", "admin", "admin", Role.ROLE_ADMIN, null);
+        setPassword(userEnt,"A1admin");
+        userRepo.save(userEnt);
+    }
 
     @Override
     public List<UserDto> getAll() {
+        logger.info("getting all users");
         return userRepo.findAll().stream()
                 .map(this::toUserDto)
+                .map(this::setAppDays)
                 .collect(Collectors.toList());
     }
 
     @Override
     public UserDto getById(Long id) {
-        return userRepo.findById(id).map(this::toUserDto).orElse(null);
+        return userRepo.findById(id).map(this::toUserDto).map(this::setAppDays).orElse(null);
     }
 
     @Override
     public UserDto create(UserEnt userEnt) {
         return Optional.of(userEnt)
                 .map(e -> this.setPassword(e, e.getPassword()))
-                .map(userRepo::save)
+                .map(this::saveUser)
                 .map(this::toUserDto)
+                .map(this::setAppDays)
                 .orElseThrow(()-> new IncorrectDataException(ErrorMessages.INCORRECT_DATA));
     }
 
@@ -56,8 +87,9 @@ public class UserServiceImpl implements UserService {
     public UserDto update(PartialUserDto partialUserDto) {
         return userRepo.findById(partialUserDto.getId())
                 .map(e -> this.attachFields(e, partialUserDto))
-                .map(userRepo::save)
+                .map(this::saveUser)
                 .map(this::toUserDto)
+                .map(this::setAppDays)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.USER_DOESNT_EXIST));
     }
 
@@ -99,5 +131,19 @@ public class UserServiceImpl implements UserService {
         userEnt.setRole(partialUserDto.getRole());
         userEnt.setUsername(partialUserDto.getUsername());
         return userEnt;
+    }
+
+    private UserDto setAppDays(UserDto userDto) {
+        userDto.setLeavesLeft(maxDays - utils.calculateAppDaysForUser(userDto.getId()));
+        return userDto;
+    }
+
+    private UserEnt saveUser(UserEnt userEnt) {
+        try {
+            return userRepo.save(userEnt);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IncorrectDataException(e.getCause());
+        }
     }
 }

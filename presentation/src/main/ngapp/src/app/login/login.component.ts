@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit {
         this.loginCredentials = this.loginForm.getRawValue();
         this._authService.authenticate(this.loginCredentials)
             .subscribe(
-                succes => this.onAuthSuccess(),
+                success => this.onAuthSuccess(),
                 error => this.onAuthError(error));
     }
 

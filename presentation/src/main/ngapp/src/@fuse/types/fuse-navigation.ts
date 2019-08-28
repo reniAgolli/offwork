@@ -12,6 +12,7 @@ export interface FuseNavigationItem
     externalUrl?: boolean;
     openInNewTab?: boolean;
     function?: any;
+    role: any[]
     badge?: {
         title?: string;
         translate?: string;

@@ -6,7 +6,8 @@ export const navigation: FuseNavigation[] = [
         title: 'Leaves',
         type: 'item',
         icon: 'perm_contact_calendar',
-        url: 'leaves'
+        url: 'leaves',
+        role: ['ROLE_USER',"ROLE_ADMIN"]
 
     },
     {
@@ -14,13 +15,15 @@ export const navigation: FuseNavigation[] = [
         title: 'Profile',
         type: 'item',
         icon: 'account_circle',
-        url: 'user-details'
+        url: 'user-details',
+        role: ['ROLE_USER',"ROLE_ADMIN"]
     },
     {
-        id: 'sers',
+        id: 'users',
         title: 'Users',
         type: 'item',
         icon: 'supervised_user_circle',
-        url: 'admin/users'
+        url: 'admin/users',
+        role: ["ROLE_ADMIN"]
     },
 ];

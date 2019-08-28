@@ -14,7 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @Data
-@NoArgsConstructor
+//@NoArgsConstructor
 @AllArgsConstructor
 public class UserEnt implements Serializable {
 
@@ -23,14 +23,28 @@ public class UserEnt implements Serializable {
     private long id;
     private String name;
     private String surname;
+    @Column(unique = true)
     private String username;
+    @Column(unique = true)
     private String email;
     private String password;
-    private String hash;
     private Role role;
     @OneToMany(cascade = {CascadeType.REMOVE}, mappedBy = "requestedBy", fetch = FetchType.EAGER)
     @JsonIgnoreProperties("requestedBy")
     private Set<ApplicationEnt> applications = new HashSet<>();
+
+    public UserEnt() {
+    }
+
+    public UserEnt(String name, String surname, String username, String email, String password, Role role, Set<ApplicationEnt> applications) {
+        this.name = name;
+        this.surname = surname;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.applications = applications;
+    }
 
     public long getId() {
         return id;
@@ -78,14 +92,6 @@ public class UserEnt implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getHash() {
-        return hash;
-    }
-
-    public void setHash(String hash) {
-        this.hash = hash;
     }
 
     public Role getRole() {

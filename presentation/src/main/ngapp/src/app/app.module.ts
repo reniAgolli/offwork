@@ -17,6 +17,7 @@ import {SharedModule} from './shared/shared.module';
 import {ToastrModule} from 'ngx-toastr';
 import {ErrorHandlerInterceptor} from './helpers/interceptors/error-handler-interceptor';
 import {TokenInterceptor} from './helpers/interceptors/token-interceptor';
+import { hasRoleDirective } from './helpers/directives/has-role.directive';
 
 
 @NgModule({

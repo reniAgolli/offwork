@@ -5,6 +5,9 @@ import {filter, flatMap, tap} from 'rxjs/operators';
 import {Leave} from '../../../models/leave';
 import {CuLeavesComponent} from '../cu-leaves/cu-leaves.component';
 import {FuseConfirmDialogComponent} from '../../../../@fuse/components/confirm-dialog/confirm-dialog.component';
+import {User} from "../../../models/user";
+import {AuthServiceService} from "../../../services/auth-service.service";
+import {UserServiceService} from "../../../services/user-service.service";
 
 @Component({
     selector: 'app-leaves',
@@ -15,14 +18,24 @@ export class LeavesComponent implements OnInit, AfterViewInit {
     public dataSource: MatTableDataSource<Leave> = new MatTableDataSource();
     public displayedColumns: string[] = ['start', 'end', 'status', 'requested', 'confirmed', 'actions'];
     public pageSizeOptions: number[] = [5, 10, 20, 50];
+    public user: User = {};
     @ViewChild(MatPaginator) private paginator;
 
     constructor(private _leavesService: LeavesServiceService,
-                private _dialog: MatDialog) {
+                private _user: UserServiceService,
+                private _dialog: MatDialog,
+                private auth: AuthServiceService) {
     }
 
     ngOnInit(): void {
         this.getAllLeaves();
+        this.getCurrentUser();
+    }
+
+    getCurrentUser() {
+        this.user = this.auth.currentUser;
+        this._user.getById(this.user.id).subscribe(e => this.user= e);
+        // console.log(this.user);
     }
 
     getAllLeaves(): void {
@@ -35,6 +48,7 @@ export class LeavesComponent implements OnInit, AfterViewInit {
         this._dialog.open(CuLeavesComponent, {data: leave ? leave : {}})
             .afterClosed().pipe(
             filter(e => e),
+            tap(e => this.getCurrentUser()),
             tap(e => this.getAllLeaves()))
             .subscribe();
     }

@@ -9,4 +9,6 @@ import java.util.List;
 public interface AppRepo extends JpaRepository<ApplicationEnt,Long> {
     @Query(value = "SELECT * from applications where requested_by_id = ?1", nativeQuery = true)
     List<ApplicationEnt> findAllByRequestedById(Long id);
+    @Query(value = "SELECT * from applications where requested_by_id = ?1 and status <> 'CONFIRMED'", nativeQuery = true)
+    List<ApplicationEnt> findAllByRequestedByIdAndStatusNotApproved(Long id);
 }

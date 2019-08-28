@@ -20,6 +20,7 @@ public class PartialUserDto {
     private String email;
     private String token;
     private Role role;
+    private double leavesLeft;
 
     public PartialUserDto() {
     }
@@ -78,5 +79,13 @@ public class PartialUserDto {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public double getLeavesLeft() {
+        return leavesLeft;
+    }
+
+    public void setLeavesLeft(double leavesLeft) {
+        this.leavesLeft = leavesLeft;
     }
 }

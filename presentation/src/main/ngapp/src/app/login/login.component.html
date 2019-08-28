@@ -1,35 +1,37 @@
-<div id="login" fxLayout="column">
-    <div id="login-form-wrapper" fxLayout="column" fxLayoutAlign="center center">
-        <div id="login-form" >
-            <div class="title">LOGIN TO YOUR ACCOUNT</div>
-            <form name="loginForm" [formGroup]="loginForm" novalidate>
-                <mat-form-field appearance="outline">
-                    <mat-label>Email</mat-label>
-                    <input matInput formControlName="emailOrUsername">
-                    <mat-icon matSuffix class="secondary-text">mail</mat-icon>
-                    <mat-error *ngIf="loginForm.get('emailOrUsername').hasError('required')">
-                        Email is required
-                    </mat-error>
-                    <mat-error
-                        *ngIf="!loginForm.get('emailOrUsername').hasError('required') ">
-                        Please enter a valid email address
-                    </mat-error>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Password</mat-label>
-                    <input matInput type="password" formControlName="password" #password>
-                    <button mat-icon-button matSuffix appTogglePassword [input]="password">
-                        <mat-icon  class="secondary-text">vpn_key</mat-icon>
+<div class="login" fxFlexFill>
+    <div id="login" fxLayout="column">
+        <div id="login-form-wrapper" fxLayout="column" fxLayoutAlign="center center">
+            <div id="login-form">
+                <div class="title">LOGIN TO YOUR ACCOUNT</div>
+                <form name="loginForm" [formGroup]="loginForm" novalidate>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Email</mat-label>
+                        <input matInput formControlName="emailOrUsername">
+                        <mat-icon matSuffix class="secondary-text">mail</mat-icon>
+                        <mat-error *ngIf="loginForm.get('emailOrUsername').hasError('required')">
+                            Email is required
+                        </mat-error>
+                        <mat-error
+                            *ngIf="!loginForm.get('emailOrUsername').hasError('required') ">
+                            Please enter a valid email address
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Password</mat-label>
+                        <input matInput type="password" formControlName="password" #password>
+                        <button mat-icon-button matSuffix appTogglePassword [input]="password">
+                            <mat-icon class="secondary-text">vpn_key</mat-icon>
+                        </button>
+                        <mat-error>
+                            Password is required
+                        </mat-error>
+                    </mat-form-field>
+                    <button mat-raised-button color="accent" class="submit-button" aria-label="LOG IN"
+                            [disabled]="loginForm.invalid" (click)="authenticate()">
+                        LOGIN
                     </button>
-                    <mat-error>
-                        Password is required
-                    </mat-error>
-                </mat-form-field>
-                <button mat-raised-button color="accent" class="submit-button" aria-label="LOG IN"
-                        [disabled]="loginForm.invalid" (click)="authenticate()">
-                    LOGIN
-                </button>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </div>

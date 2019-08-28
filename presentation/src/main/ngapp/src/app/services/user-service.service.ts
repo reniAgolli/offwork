@@ -24,15 +24,15 @@ export class UserServiceService {
     }
 
     delete(id: string): Observable<any> {
-        return this.http.delete<any>(`${this.baseUri}/id`);
+        return this.http.delete<any>(`${this.baseUri}/${id}`);
     }
 
     getAll(): Observable<User[]> {
         return this.http.get<User[]>(this.baseUri);
     }
 
-    getById(id: string): Observable<User> {
-        return this.http.get<User>(`${this.baseUri}/id`);
+    getById(id: number): Observable<User> {
+        return this.http.get<User>(`${this.baseUri}/${id}`);
     }
 
     resetPassword(resetCredentials: ResetPasswordDto): Observable<User> {

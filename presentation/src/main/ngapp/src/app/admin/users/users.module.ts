@@ -1,14 +1,15 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {UsersComponent} from './users/users.component';
-import {CuUsersComponent} from './cu-users/cu-users.component';
+import {SharedModule} from "../../shared/shared.module";
 
 @NgModule({
-    declarations: [UsersComponent, CuUsersComponent],
+    declarations: [UsersComponent],
     imports: [
-        CommonModule
+        CommonModule,
+        SharedModule
     ],
-    entryComponents: [CuUsersComponent]
+    entryComponents: []
 })
 export class UsersModule {
 }

@@ -30,15 +30,15 @@ export class CuUsersComponent implements OnInit {
     save(): void {
         this.collectData();
         const sub = !this.isUpdate ? this._userService.create(this.data) : this._userService.update(this.data);
-        sub.subscribe(e => this.close(true));
+        sub.subscribe(e => this.close(this.data));
     }
 
-    close(result?: boolean): void {
+    close(result?: boolean | User): void {
         this._dialogRef.close(result);
     }
 
     private initData(): void {
-        this.data = this.isUpdate ? this.data : {
+        this.data = this.isUpdate ? Object.assign({}, this.data) : {
             name: '',
             surname: '',
             username: '',

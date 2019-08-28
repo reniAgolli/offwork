@@ -1,0 +1,14 @@
+.content {
+    margin-top: 50px;
+
+    p {
+        border: 1px solid #333333;
+        padding: 14px 15px;
+        margin: 3px;
+        border-radius: 3px;
+
+        .title {
+            font-weight: bolder;
+        }
+    }
+}

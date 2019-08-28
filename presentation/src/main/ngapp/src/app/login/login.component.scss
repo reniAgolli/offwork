@@ -1,10 +1,10 @@
-@import "src/@fuse/scss/fuse";
+@import "../../@fuse/scss/fuse";
 
 .login {
 
     #login {
         width: 100%;
-        //background: url('/assets/images/backgrounds/dark-material-bg.jpg') no-repeat;
+        background: url('../../assets/images/backgrounds/dark-material-bg.jpg') no-repeat;
         background-size: cover;
 
         #login-form-wrapper {

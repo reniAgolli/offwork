@@ -22,6 +22,11 @@
             <td mat-cell *matCellDef="let element"> {{element.email}}</td>
         </ng-container>
 
+        <ng-container matColumnDef="leaves">
+            <th mat-header-cell *matHeaderCellDef> Leaves LEft</th>
+            <td mat-cell *matCellDef="let element"> {{element.leavesLeft}}</td>
+        </ng-container>
+
         <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef>
                 <button mat-icon-button (click)="cUUser({})" title="Create User">

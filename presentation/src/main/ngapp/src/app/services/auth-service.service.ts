@@ -7,24 +7,36 @@ import {LoginCredentials} from '../models/login-credentials';
 import {tap} from 'rxjs/operators';
 import {CookieService} from 'ngx-cookie-service';
 import {Router} from '@angular/router';
+import {UserServiceService} from "./user-service.service";
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthServiceService {
 
-    private static USER_LOCALSTORAGE = 'CURRENT_USER';
-    private static TOKEN_COOKIE = 'AUTH_TOKEN';
+    public static USER_LOCALSTORAGE = 'CURRENT_USER';
+    public static TOKEN_COOKIE = 'AUTH_TOKEN';
 
     private baseUri = environment.SERVER_URI;
 
     constructor(private http: HttpClient,
                 private cookieService: CookieService,
+                private _user: UserServiceService,
                 private _router: Router) {
     }
 
     get currentUser(): User {
         return JSON.parse(localStorage.getItem(AuthServiceService.USER_LOCALSTORAGE));
+    }
+
+    static hasRole(role: string): boolean {
+        const currentUser = JSON.parse(localStorage.getItem(AuthServiceService.USER_LOCALSTORAGE));
+        return !!currentUser && currentUser.role === role;
+    }
+
+    static hasAnyRole(roles: string[]): boolean {
+        const currentUser = JSON.parse(localStorage.getItem(AuthServiceService.USER_LOCALSTORAGE));
+        return !!currentUser && roles.indexOf(currentUser.role) >= 0;
     }
 
     authenticate(loginCredentials: LoginCredentials): Observable<User> {
@@ -33,9 +45,8 @@ export class AuthServiceService {
     }
 
     logout(): void {
-        console.log(`${this.baseUri}/logout`);
         this.http.get<any>(`${this.baseUri}/logout`)
-            // .pipe(tap(e => this.invalidateToken()))
+        // .pipe(tap(e => this.invalidateToken()))
             .subscribe(e => this.invalidateToken());
     }
 
@@ -43,18 +54,13 @@ export class AuthServiceService {
         return !!this.cookieService.get(AuthServiceService.TOKEN_COOKIE);
     }
 
-    hasRole(role: string): boolean {
-        const currentUser = JSON.parse(localStorage.getItem(AuthServiceService.USER_LOCALSTORAGE));
-        return !!currentUser && currentUser.role === role;
-    }
-
     getToken(): string {
         return this.cookieService.get(AuthServiceService.TOKEN_COOKIE);
     }
 
     private setCurrentUser(user: User): void {
-        localStorage.setItem(AuthServiceService.USER_LOCALSTORAGE, JSON.stringify(user));
         this.cookieService.set(AuthServiceService.TOKEN_COOKIE, user.token);
+        localStorage.setItem(AuthServiceService.USER_LOCALSTORAGE, JSON.stringify(user));
     }
 
 

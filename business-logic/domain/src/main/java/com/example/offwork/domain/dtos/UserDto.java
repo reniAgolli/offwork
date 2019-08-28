@@ -28,4 +28,5 @@ public class UserDto extends PartialUserDto {
     public void setApplications(List<ApplicationDto> applications) {
         this.applications = applications;
     }
+
 }

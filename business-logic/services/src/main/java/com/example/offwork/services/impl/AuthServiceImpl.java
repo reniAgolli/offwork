@@ -8,9 +8,10 @@ import com.example.offwork.domain.extras.ErrorMessages;
 import com.example.offwork.persistence.dao.UserRepo;
 import com.example.offwork.services.api.AuthService;
 import com.example.offwork.services.security.JwtTokenProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AuthServiceImpl implements AuthService {
 
+    private static Logger logger = LogManager.getLogger(AuthServiceImpl.class);
+
     @Autowired
     ModelMapper modelMapper;
     @Autowired
@@ -34,7 +37,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public PartialUserDto authenticate(LoginCredentials loginCredentials) {
-        System.out.println(loginCredentials);
+        logger.info(loginCredentials);
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginCredentials.getEmailOrUsername(),
@@ -57,8 +60,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void logout() {
-        System.out.println("Logged off");
-        ;
+        logger.info("Logged off");
     }
 
     @Override

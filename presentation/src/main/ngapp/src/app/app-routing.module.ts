@@ -14,8 +14,8 @@ const routes: Routes = [
     {
         path: 'admin',
         loadChildren: './admin/admin.module#AdminModule#AdminModule',
-        // canActivate: [AuthGuardGuard, AdminGuardGuard],
-        // canActivateChild: [AuthGuardGuard, AdminGuardGuard]
+        canActivate: [AuthGuardGuard, AdminGuardGuard],
+        canActivateChild: [AuthGuardGuard, AdminGuardGuard]
     },
     {path: 'login', component: LoginComponent}
 ];

@@ -3,7 +3,7 @@ import {MatDialog, MatPaginator, MatTableDataSource} from '@angular/material';
 import {User} from '../../../models/user';
 import {UserServiceService} from '../../../services/user-service.service';
 import {filter, tap} from 'rxjs/operators';
-import {CuUsersComponent} from '../cu-users/cu-users.component';
+import {CuUsersComponent} from '../../../shared/components/cu-users/cu-users.component';
 import {FuseConfirmDialogComponent} from '../../../../@fuse/components/confirm-dialog/confirm-dialog.component';
 import {ResetPasswordComponent} from '../../../shared/components/reset-password/reset-password.component';
 
@@ -15,7 +15,7 @@ import {ResetPasswordComponent} from '../../../shared/components/reset-password/
 export class UsersComponent implements OnInit, AfterViewInit {
 
     public dataSource: MatTableDataSource<User> = new MatTableDataSource();
-    public displayedColumns: string[] = ['name', 'surname', 'username', 'email', 'actions'];
+    public displayedColumns: string[] = ['name', 'surname', 'username', 'email', 'leaves', 'actions'];
     public pageSizeOptions: number[] = [5, 10, 20, 50];
     @ViewChild(MatPaginator) private paginator;
 
